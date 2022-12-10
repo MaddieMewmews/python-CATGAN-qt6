@@ -36,7 +36,7 @@ class Ui_MainWindow(object):
         self.graphicsView_2.setObjectName("graphicsView_2")
         self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
         self.progressBar.setGeometry(QtCore.QRect(30, 500, 461, 23))
-        self.progressBar.setProperty("value", 42)
+        self.progressBar.setProperty("value", 0)
         self.progressBar.setObjectName("progressBar")
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(510, 230, 81, 16))
