@@ -19,14 +19,18 @@ class Controller(QtWidgets.QMainWindow, Ui_MainWindow):
         # Following is no longer needed as of QT6
         #self.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
         #self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+
         self.buttonBox.accepted.connect(lambda: self.submit())
-        #self.buttonBox.clear.connect(lambda: self.clear())
-        #self.buttonBox.close.connect(lambda: self.kill())
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.StandardButton.RestoreDefaults).clicked.connect(lambda: self.clear())
+        self.buttonBox.rejected.connect(lambda: self.kill())
         self.pushButton.clicked.connect(lambda: self.BrowseModel())
         self.pushButton_2.clicked.connect(lambda: self.BrowseInput())
         self.radioButton.clicked.connect(lambda: self.setPNG())
         self.radioButton_2.clicked.connect(lambda: self.setJXL())
         self.checkBox.clicked.connect(lambda: self.setTrans())
+        # remove the graphicsView elements until I figure out how they work
+        self.graphicsView.close()
+        self.graphicsView_2.close()
 
     def submit(self):
         if self.__modelpath == "":
@@ -34,8 +38,8 @@ class Controller(QtWidgets.QMainWindow, Ui_MainWindow):
         elif self.__modelpath == "":
             print("path needed")
         else:
-            shutil.rmtree('outputTemp')
-            shutil.rmtree('inputTemp')
+            #shutil.rmtree('outputTemp')
+            #shutil.rmtree('inputTemp')
             #progress bar throws error, maybe due to threading stuff QT does?
             #self.progressBar.setValue("0")
             os.makedirs('inputTemp')
@@ -51,11 +55,11 @@ class Controller(QtWidgets.QMainWindow, Ui_MainWindow):
             subprocess.run(f"python upscale.py {inputvars}", shell=True, cwd="./ESRGAN")
             #self.progressBar.setValue("50")
             if self.__JXL == True:
-                subprocess.run(f"ffmpeg -i ./outputTemp/upscaled_{filename} -c:v libjxl {outputpath}/{filename.jxl}")
+                subprocess.run(f"ffmpeg -i ./outputTemp/upscaled_{filename} -c:v libjxl {self.__inputpath}_{os.path.basename(self.__modelpath).split('/')[-1]}.jxl")
                 #figure out setting up image previews with QT
                 #self.graphicsView_2.setObjectName()
             else:
-                shutil.copyfile(f"./outputTemp/upscaled_{filename}", f"{outputpath}/{filename}_{os.path.basename(self.__modelpath).split('/')[-1]}.png")
+                shutil.copyfile(f"./outputTemp/upscaled_{filename}", f"{self.__inputpath}_{os.path.basename(self.__modelpath).split('/')[-1]}.png")
             #self.progressBar.setValue("75")
             shutil.rmtree('outputTemp')
             shutil.rmtree('inputTemp')
